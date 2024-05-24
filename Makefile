@@ -7,4 +7,4 @@ dev:
 
 bootstrap:
 	@echo "Running bootstrap script..."
-	curl localhost:3004/api/bootstrap
+	curl localhost:3001/api/bootstrap

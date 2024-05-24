@@ -9,6 +9,7 @@ import { id, init, tx } from "@instantdb/admin"
 import { adminConfig } from '@/data/config';
 import { fetchSchema, httpTransact } from '@/lib/http';
 import { generateUser } from '@/lib/generate';
+import { randomElement } from '@/utils/random';
 
 dotenv.config();
 
@@ -53,6 +54,9 @@ interface RefAttribute extends BaseAttribute {
 const schema: Schema = {
   users: {
     keys: ["email", "name", "role", "created_at"],
+    links: [
+      { ref: "users", forward: "students", reverse: "teachers" },
+    ]
   },
   tasks: {
     keys: ["question", "created_at"],
@@ -119,9 +123,18 @@ const db = init(adminConfig);
 const { transact } = db;
 
 async function bootstrap() {
-  const users = Array(5).fill(null).map(() => generateUser());
-  const txs = users.map(u => tx.users[u.id].update(u));
-  await transact(txs);
+  const users = Array(15).fill(null).map(() => generateUser());
+  const admins = users.filter(u => u.role === 'admin');
+  const teachers = users.filter(u => u.role === 'teacher');
+  const students = users.filter(u => u.role === 'student');
+  const userTxs = users.map(u => tx.users[u.id].update(u));
+  const associateStudents = students.map(
+    (student) => {
+      const teacher = randomElement(teachers);
+      return tx.users[teacher.id].update({ students: student.id });
+    }
+  )
+  await transact([...userTxs, ...associateStudents]);
 }
 
 export default async function handler(req, res) {

@@ -9,9 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.18",
-    "@instantdb/react": "^0.10.14",
+    "@headlessui/react": "^1.7.19",
+    "@heroicons/react": "^2.1.3",
     "@instantdb/admin": "^0.10.14",
+    "@instantdb/react": "^0.10.14",
     "@react-oauth/google": "^0.12.1",
     "dotenv": "^16.4.5",
     "next": "^14.1.4",
